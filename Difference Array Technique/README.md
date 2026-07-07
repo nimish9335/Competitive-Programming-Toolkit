@@ -1,398 +1,88 @@
-# Difference Array Technique
+# Difference Array — Quick Notes
 
-## Overview
+## Kya hai?
+Range updates (`add x to a[L..R]`) ko **O(1) per query** mein karne ki trick.
+Naive: O(N) per update → O(N×Q) total.
+Diff array: O(1) per update + O(N) final reconstruction → **O(N + Q)**.
 
-The Difference Array is a powerful optimization technique used to perform multiple **range update operations** in constant time.
+## Kab use karo?
+- Bahut saari range updates deni hain (`add x from L to R`)
+- Sirf **final array** chahiye, beech-beech mein query nahi
+- "Offline" type problems (pehle sab updates, phir answer)
 
-Instead of updating every element inside a range `[L, R]`, we only update two positions in a helper array.
+⚠️ **Use mat karo** agar har update ke baad turant query chahiye (range sum/min/max) — wahan Segment Tree / BIT + Lazy Propagation use karo.
 
-After processing all updates, a single prefix sum reconstructs the final array.
+## Core Formula
 
-This reduces the complexity from **O(N × Q)** to **O(N + Q)**.
-
----
-
-# When to Use
-
-Difference Array should immediately come to mind whenever a problem contains statements such as:
-
-- Add `x` to every element from `L` to `R`
-- Increment all elements in a range
-- Perform many range updates
-- Print the final array after all updates
-- Offline range updates
-
-If updates are performed first and the final values are required only once, Difference Array is usually the correct solution.
-
----
-
-# Core Idea
-
-Suppose we need to perform
-
-```
-Add x to every element from L to R
-```
-
-Instead of
-
-```
-for(i=L;i<=R;i++)
-    a[i]+=x;
-```
-
-we simply perform
-
-```
-diff[L] += x;
-diff[R+1] -= x;
-```
-
-After processing every query,
-
-```
-Prefix Sum(diff)
-```
-
-produces the final updated array.
-
----
-
-# Why Does It Work?
-
-The difference array stores **changes**, not values.
-
-When taking the prefix sum,
-
-- `+x` starts affecting the array from index `L`
-- the effect continues automatically
-- at `R+1`, `-x` cancels the effect
-
-Therefore only two updates are sufficient.
-
-Visualization
-
-```
-L               R
-|---------------|
-
-+5              -5
-
-Prefix Sum
-
-0 0 5 5 5 5 0 0
-```
-
----
-
-# Mathematical Definition
-
-For an array
-
-```
-a[1...n]
-```
-
-Difference array is defined as
-
+**Diff array banane ka tarika:**
 ```
 diff[1] = a[1]
-
-diff[i] = a[i] - a[i-1]
+diff[i] = a[i] - a[i-1]      // for i = 2..n
 ```
 
-Original array can always be recovered by
-
+**Range update `[L, R] += X`:**
 ```
-a[i] = a[i-1] + diff[i]
-```
-
-In other words,
-
-> Prefix Sum of Difference Array = Original Array
-
----
-
-# Algorithm
-
-### Step 1
-
-Construct Difference Array.
-
-```
-diff[1]=a[1]
-
-for(i=2;i<=n;i++)
-    diff[i]=a[i]-a[i-1];
-```
-
----
-
-### Step 2
-
-For every query
-
-```
-L R X
-```
-
-perform
-
-```
-diff[L]+=X;
-
-diff[R+1]-=X;
-```
-
----
-
-### Step 3
-
-Take prefix sum
-
-```
-a[1]=diff[1];
-
-for(i=2;i<=n;i++)
-    a[i]=a[i-1]+diff[i];
-```
-
-Now `a` contains the final updated values.
-
----
-
-# Complexity
-
-Naive
-
-```
-Every Update = O(N)
-
-Total = O(N × Q)
-```
-
-Difference Array
-
-```
-Each Update = O(1)
-
-All Updates = O(Q)
-
-Reconstruction = O(N)
-
-Total = O(N + Q)
-```
-
----
-
-# Example
-
-Initial Array
-
-```
-1 2 3 4 5
-```
-
-Queries
-
-```
-1 3 +2
-
-2 5 +4
-```
-
-Difference Array
-
-```
-1 1 1 1 1
-```
-
-After Updates
-
-```
-diff[1]+=2
-diff[4]-=2
-
-diff[2]+=4
-diff[6]-=4
-```
-
-Take Prefix Sum
-
-```
-3 8 9 8 9
-```
-
-which is exactly the final array.
-
----
-
-# Recognizing Difference Array Problems
-
-Look for phrases like
-
-- Perform Q range updates
-- Add value to every element in a segment
-- Increment all indices between L and R
-- Apply operations and print final array
-- Offline range updates
-
-These are strong indicators that Difference Array may be applicable.
-
----
-
-# When NOT to Use
-
-Difference Array is **not suitable** when
-
-- queries ask for intermediate results
-- updates and queries are mixed
-- range sum is required after every update
-- range minimum/maximum after each operation
-
-In such situations use
-
-- Fenwick Tree (BIT)
-- Segment Tree
-- Lazy Propagation
-
----
-
-# Common Mistakes
-
-### Forgetting `R + 1`
-
-Wrong
-
-```
-diff[R] -= X;
-```
-
-Correct
-
-```
-diff[R+1] -= X;
-```
-
----
-
-### Not allocating extra space
-
-Always create
-
-```
-vector<long long> diff(n+2);
-```
-
-because `R` may be equal to `N`.
-
----
-
-### Forgetting prefix sum
-
-Difference array itself is **not** the answer.
-
-Always reconstruct the final array using prefix sums.
-
----
-
-### Wrong indexing
-
-Be careful about
-
-- 0-based indexing
-- 1-based indexing
-
-The update formula changes accordingly.
-
----
-
-# Relationship with Prefix Sum
-
-Prefix Sum
-
-```
-Range Query
-```
-
-Difference Array
-
-```
-Range Update
-```
-
-A useful way to remember this is
-
-```
-Prefix Sum
-    ↓
-Fast Queries
-
-Difference Array
-    ↓
-Fast Updates
-```
-
----
-
-# Advanced Applications
-
-Difference Array is frequently combined with
-
-- Prefix Sum
-- Binary Search
-- Sweep Line Algorithm
-- Coordinate Compression
-- Interval Problems
-- Two-Dimensional Difference Array
-- Difference Array on Operations (Difference on Queries)
-
-Many Codeforces problems apply Difference Array **twice**:
-
-1. Determine how many times each operation is executed.
-2. Apply those operations efficiently to the original array.
-
----
-
-# Template
-
-```
-Build Difference Array
-
-↓
-
-Apply all updates in O(1)
-
-↓
-
-Take Prefix Sum
-
-↓
-
-Final Array
-```
-
----
-
-# Key Formula
-
-```
-Range Update
-
-diff[L] += X
+diff[L]   += X
 diff[R+1] -= X
 ```
 
+**Original array wapas paane ke liye (prefix sum):**
 ```
-Recover Array
-
 a[i] = a[i-1] + diff[i]
 ```
 
----
+## Kyun kaam karta hai?
+`diff[L] += X` prefix sum lene par index `L` se aage sabko `+X` de deta hai.
+`diff[R+1] -= X` us effect ko `R+1` se cancel kar deta hai.
+Isliye poore range mein sirf 2 point-updates kaafi hain.
 
-# Takeaway
+## In-place Version (extra array ki zaroorat nahi)
 
-Difference Array converts expensive range updates into constant-time operations by storing only the **start** and **end** of each update.
+```cpp
+void rangeUpdate(vector<long long>& a, vector<vector<long long>>& queries) {
+    int n = a.size() - 1;   // 1-indexed, a[1..n]
 
-Whenever a problem asks for **many range updates but only the final array**, Difference Array should be one of the first techniques you consider.
+    // Step 1: array ko khud diff bana do (right→left)
+    for (int i = n; i >= 2; i--)
+        a[i] -= a[i - 1];
+
+    // Step 2: queries seedhe isi array par apply
+    for (auto &q : queries) {
+        long long l = q[0], r = q[1], val = q[2];
+        a[l] += val;
+        if (r + 1 <= n) a[r + 1] -= val;
+    }
+
+    // Step 3: prefix sum se original wapas banao (left→right)
+    for (int i = 2; i <= n; i++)
+        a[i] += a[i - 1];
+}
+```
+
+## Example
+
+Array: `1 2 3 4 5`
+Queries: `(1,3,+2)`, `(2,5,+4)`
+
+```
+diff → 1 1 1 1 1
+apply → diff[1]+=2, diff[4]-=2, diff[2]+=4, diff[6]-=4
+prefix sum → 3 8 9 8 9   ✅ final array
+```
+
+## Common Mistakes
+- `diff[R] -= X` likhna instead of `diff[R+1] -= X`
+- Array size `n+2` na rakhna (kyunki `R` = `N` ho sakta hai)
+- Prefix sum lena bhool jaana (diff array khud answer nahi hai)
+- 0-indexed vs 1-indexed mix kar dena
+
+## Yaad rakhne ka tarika
+```
+Prefix Sum       → Fast Range QUERY
+Difference Array → Fast Range UPDATE
+```
+
+## Advanced (agar aage padhna ho)
+- 2D Difference Array (grid range updates)
+- Sweep Line + Difference Array
+- "Diff on diff" — pehle count karo har operation kitni baar chalega, phir usko array par apply karo

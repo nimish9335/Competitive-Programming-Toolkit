@@ -43,6 +43,10 @@ Competitive-Programming-Toolkit
 │   ├── README.md
 │   └── ordered_set.cpp
 │
+├── Difference-Array
+│   ├── README.md
+│   └── difference_array.cpp
+│
 └── README.md
 ```
 
@@ -55,6 +59,7 @@ Competitive-Programming-Toolkit
 | Concept | Status |
 |:----------------------------|:------:|
 | Ordered Set (PBDS) | ✅ Learned |
+| Difference Array | ✅ Learned |
 
 ---
 
@@ -98,7 +103,7 @@ Instead, it focuses on preserving reusable knowledge that can be applied across 
 
 | Learned Concepts | Count |
 |-----------------|------:|
-| ✅ Total Concepts | **1** |
+| ✅ Total Concepts | **2** |
 
 As I learn new concepts, this section will continue to grow.
 
