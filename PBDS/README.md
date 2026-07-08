@@ -2,15 +2,19 @@
 
 Policy Based Data Structure (PBDS) is an extension of the C++ STL.
 
-It behaves like a `std::set` but also supports order statistics.
+It works like a `std::set` but also supports **Order Statistics**, making it easy to find the k-th smallest element or count elements smaller than a given value.
 
-Time Complexity of all operations:
+---
 
-- Insert : O(log N)
-- Erase : O(log N)
-- Find : O(log N)
-- order_of_key() : O(log N)
-- find_by_order() : O(log N)
+## Time Complexity
+
+| Operation | Complexity |
+|-----------|------------|
+| Insert | O(log N) |
+| Erase | O(log N) |
+| Find | O(log N) |
+| order_of_key() | O(log N) |
+| find_by_order() | O(log N) |
 
 ---
 
@@ -55,8 +59,10 @@ st.erase(x);
 ## Search
 
 ```cpp
-st.find(x);
+st.find(x) != st.end();
 ```
+
+Returns whether `x` exists in the set.
 
 ---
 
@@ -66,15 +72,14 @@ st.find(x);
 st.order_of_key(x);
 ```
 
-Returns the number of elements strictly smaller than `x`.
+Returns the number of elements **strictly smaller** than `x`.
 
-Example
+---
 
-```
-1 3 5 7 9
+## Count Elements Smaller than or Equal to x
 
-order_of_key(6) = 3
-order_of_key(5) = 2
+```cpp
+st.order_of_key(x + 1);
 ```
 
 ---
@@ -85,12 +90,12 @@ order_of_key(5) = 2
 st.size() - st.order_of_key(x + 1);
 ```
 
-Example
+---
 
-```
-1 3 5 7 9
+## Count Elements Greater than or Equal to x
 
-Greater than 5 = 2
+```cpp
+st.size() - st.order_of_key(x);
 ```
 
 ---
@@ -101,14 +106,12 @@ Greater than 5 = 2
 *st.find_by_order(k);
 ```
 
-0-based indexing
+Uses **0-based indexing**.
 
-Example
-
-```
-0 -> smallest
-1 -> second smallest
-2 -> third smallest
+```text
+k = 0 -> Smallest
+k = 1 -> Second Smallest
+k = 2 -> Third Smallest
 ```
 
 ---
@@ -119,29 +122,38 @@ Example
 *st.find_by_order(st.size() - k);
 ```
 
-Example
-
-```
-k = 1 -> largest
-k = 2 -> second largest
+```text
+k = 1 -> Largest
+k = 2 -> Second Largest
 ```
 
 ---
 
-## Complexity
+## Example
 
-| Operation | Complexity |
-|-----------|------------|
-| insert | O(log N) |
-| erase | O(log N) |
-| find | O(log N) |
-| order_of_key | O(log N) |
-| find_by_order | O(log N) |
+```text
+Set = {1, 3, 5, 7, 9}
+
+order_of_key(6) = 3
+order_of_key(5) = 2
+
+find_by_order(0) = 1
+find_by_order(2) = 5
+find_by_order(4) = 9
+```
 
 ---
 
 ## Notes
 
-- Stores only unique values.
-- Duplicate values are not allowed.
-- For duplicates, use `pair<int,int>` or an ordered multiset implementation.
+- Stores only **unique** values.
+- Duplicate values are **not allowed**.
+- For duplicates, use `pair<int, int>` or an Ordered Multiset implementation.
+
+---
+
+## When to Use PBDS
+
+- Find the k-th smallest/largest element.
+- Count elements smaller or greater than a value.
+- Dynamic order statistics with insertion and deletion in `O(log N)`.
